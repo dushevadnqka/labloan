@@ -11,6 +11,7 @@ from bookings.models import (
 from bookings.rules import MAX_ACTIVE_BOOKINGS, MAX_BOOKING_HOURS, overlaps
 from core.errors import BookingError, NotAllowedError
 from core.roles import Role
+from equipment.models import STATUS_IN_REPAIR
 from equipment.service import get_equipment
 from notifications.dispatcher import notify_booking_approved, notify_booking_rejected
 from penalties.rules import LATE_CANCEL_WINDOW_HOURS, apply_late_cancel_penalty
@@ -18,6 +19,8 @@ from penalties.rules import LATE_CANCEL_WINDOW_HOURS, apply_late_cancel_penalty
 
 def create_booking(student_id: int, equipment_id: int, start: datetime, end: datetime) -> Booking:
     equipment = get_equipment(equipment_id)
+    if equipment.status == STATUS_IN_REPAIR:
+        raise BookingError("this equipment is in repair")
     if end <= start:
         raise BookingError("the booking must end after it starts")
     if end - start > timedelta(hours=MAX_BOOKING_HOURS):
