@@ -54,8 +54,8 @@ def cancel_booking(booking_id: int, student_id: int, now: datetime | None = None
 
 
 def approve_booking(booking_id: int, actor_role: Role) -> Booking:
-    if actor_role != Role.LAB_MANAGER:
-        raise NotAllowedError("only a lab manager can approve bookings")
+    if actor_role != Role.LAB_TECHNICIAN:
+        raise NotAllowedError("only a lab technician can approve bookings")
     booking = BOOKINGS.get(booking_id)
     if booking is None or booking.status != STATUS_PENDING:
         raise BookingError("no pending booking with this id")
@@ -65,8 +65,8 @@ def approve_booking(booking_id: int, actor_role: Role) -> Booking:
 
 
 def reject_booking(booking_id: int, actor_role: Role, reason: str) -> Booking:
-    if actor_role != Role.LAB_MANAGER:
-        raise NotAllowedError("only a lab manager can reject bookings")
+    if actor_role != Role.LAB_TECHNICIAN:
+        raise NotAllowedError("only a lab technician can reject bookings")
     booking = BOOKINGS.get(booking_id)
     if booking is None or booking.status != STATUS_PENDING:
         raise BookingError("no pending booking with this id")
